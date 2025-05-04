@@ -1,0 +1,357 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Cap - 05</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+      background: white;
+    }
+
+    .container {
+      position: relative;
+      min-height: 100vh;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+    }
+
+    /* Bottom purple wave */
+    .wave-bottom-back {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 420px;
+      z-index: 1;
+      transform: translateY(-2px); /* Slight offset to prevent any gaps */
+    }
+
+    /* Bottom grey wave */
+    .wave-bottom-front {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 320px;
+      z-index: 2;
+    }
+
+    .logos {
+      position: absolute;
+      margin-top: -10px;
+      top: 10px;
+      left: 0;
+      right: 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 5px 40px;
+      z-index: 3;
+      background-color: rgb(241, 178, 241);
+    }
+
+    .logo-section {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .institute-name {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      margin-top: -5px;
+    }
+
+    .institute-name .main-title {
+      color: #c41e3a;
+      font-size: 20px;
+      font-weight: bold;
+      letter-spacing: 2.5px;
+      word-spacing: 4px;
+    }
+
+    .institute-name .sub-title {
+      color: #333;
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: normal;
+      width: 100%;
+    }
+
+    .griet {
+      width: 80px;
+      height: auto;
+      margin-left: -15px;
+    }
+
+    .aac {
+      width: 80px;
+      height: auto;
+      margin-right: -15px;
+    }
+
+    .form {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+      padding: 40px 20px;
+      background: transparent;
+      max-width: 900px;
+      width: 90%;
+      z-index: 999;
+    }
+
+    .input-container {
+      display: flex;
+      justify-content: center;
+      gap: 80px;
+      margin-bottom: 30px;
+      margin-top: 20px;
+    }
+
+    .input-group {
+      display: inline-block;
+      margin: 20px;
+    }
+
+    .input-group label {
+      font-weight: 500;
+      display: block;
+      margin-bottom: 10px;
+      font-size: 16px;
+      text-align: center;
+    }
+
+    .input-group input {
+      padding: 10px 20px;
+      border: 2px solid #ccc;
+      border-radius: 30px;
+      outline: none;
+      width: 250px;
+      font-size: 15px;
+      box-shadow: inset 0 2px 8px rgba(0,0,0,0.1);
+      transition: all 0.3s ease;
+    }
+
+    .input-group input:focus {
+      border-color: #b164b6;
+      box-shadow: inset 0 2px 8px rgba(0,0,0,0.1), 0 0 0 2px rgba(214,156,217,0.2);
+    }
+
+    .input-group input::placeholder {
+      color: #999;
+      font-size: 16px;
+    }
+
+    .submit-btn {
+      padding: 10px 40px;
+      background-color: #b164b6;
+      color: white;
+      border: none;
+      border-radius: 30px;
+      cursor: pointer;
+      font-size: 16px;
+      margin-top: 20px;
+      transition: all 0.3s ease;
+      box-shadow: 0 5px 20px rgba(177, 100, 182, 0.4),
+                 0 2px 8px rgba(177, 100, 182, 0.2);  /* Added double shadow for depth */
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+      z-index: 9999;
+    }
+
+    .submit-btn:hover {
+      background-color: #c975ce;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(177, 100, 182, 0.5),
+                 0 4px 12px rgba(177, 100, 182, 0.3);  /* Enhanced double shadow on hover */
+      color: #fff;
+      font-weight: 500;
+    }
+
+    .submit-btn:active {
+      transform: translateY(0);
+      box-shadow: 0 4px 15px rgba(177, 100, 182, 0.3),
+                 0 2px 6px rgba(177, 100, 182, 0.2);  /* Reduced shadow when pressed */
+    }
+
+    @media screen and (max-width: 768px) {
+      .input-container {
+        flex-direction: column;
+        align-items: center;
+        gap: 20px;
+      }
+
+      .input-group {
+        width: 100%;
+        max-width: 320px;
+      }
+
+      .logos {
+        padding: 8px 30px;
+      }
+
+      .griet, .aac {
+        width: 80px;
+      }
+    }
+
+    @media screen and (max-width: 480px) {
+      .form {
+        padding: 20px 15px;
+      }
+
+      .input-group {
+        max-width: 280px;
+      }
+
+      .logos {
+        padding: 5px 20px;
+      }
+
+      .griet, .aac {
+        width: 60px;
+      }
+
+      .submit-btn {
+        padding: 8px 40px;
+        font-size: 15px;
+        z-index: 9999;
+      }
+    }
+
+    /* Add these CSS rules for error messages */
+    .error-message {
+      color: #ff0000;
+      font-size: 12px;
+      margin-top: 5px;
+      display: none;
+    }
+
+    .input-group input.error {
+      border-color: #ff0000;
+      box-shadow: inset 0 2px 8px rgba(255,0,0,0.1);
+    }
+
+    .input-group select.branch {
+      width: 200px;
+      padding: 10px 12px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      background-color: #fff;
+      font-size: 16px;
+      color: #333;
+      appearance: none; /* removes default OS styling */
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      background-image: url('data:image/svg+xml;utf8,<svg fill="gray" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>');
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      background-size: 16px 16px;
+      cursor: pointer;
+    }
+    
+    .input-group select.branch:focus {
+      border-color:rgb(230, 158, 244);
+      outline: none;
+      box-shadow: 0 0 0 2px rgba(184, 131, 186, 0.21);
+    }
+    .input-group select.section {
+      width: 200px;
+      padding: 10px 12px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      background-color: #fff;
+      font-size: 16px;
+      color: #333;
+      appearance: none; /* removes default OS styling */
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      background-image: url('data:image/svg+xml;utf8,<svg fill="gray" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>');
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      background-size: 16px 16px;
+      cursor: pointer;
+    }
+    
+    .input-group select.section:focus {
+      border-color:rgb(230, 158, 244);
+      outline: none;
+      box-shadow: 0 0 0 2px rgba(184, 131, 186, 0.21);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="logos">
+      <div class="logo-section">
+        <img class="griet" src="{% static 'GRIET.PNG' %}" alt="GRIET Logo">
+        <div class="institute-name">
+          <span class="main-title">GOKARAJU RANGARAJU</span>
+          <span class="sub-title">INSTITUTE OF ENGINEERING AND TECHNOLOGY</span>
+        </div>
+      </div>
+      <img class="aac" src="{% static 'AAC.PNG' %}" alt="AAC Logo">
+    </div>
+
+    <div class="form">
+      <form id="rollNumberForm" action="{% url 'students_table' batch %}" method="GET">
+        <div class="input-container">
+          <div class="input-group">
+            <label for="branch">Select Branch :</label>
+            <select class="branch" name="branch" id="branch" required>
+              <option value="">Select Branch</option>
+              <option value="CSE" {% if branch == "CSE" %}selected{% endif %}>CSE</option>
+              <option value="CSM" {% if branch == "CSM" %}selected{% endif %}>CSM</option>
+              <option value="CSIT" {% if branch == "CSIT" %}selected{% endif %}>CSIT</option>
+              <option value="CSBS" {% if branch == "CSBS" %}selected{% endif %}>CSBS</option>
+              <option value="CSDS" {% if branch == "CSDS" %}selected{% endif %}>CSDS</option>
+              <option value="IT" {% if branch == "IT" %}selected{% endif %}>IT</option>
+              <option value="ECE" {% if branch == "ECE" %}selected{% endif %}>ECE</option>
+              <option value="EEE" {% if branch == "EEE" %}selected{% endif %}>EEE</option>
+              <option value="MECH" {% if branch == "MECH" %}selected{% endif %}>MECH</option>
+              <option value="CIVIL" {% if branch == "CIVIL" %}selected{% endif %}>CIVIL</option>
+            </select>
+            <div class="error-message"></div>
+          </div>
+      
+          <div class="input-group">
+            <label for="section">Select Section :</label>
+            <select class = "section" name="section" id="section" required>
+              <option value="">Select Section</option>
+              <option value="A" {% if section == "A" %}selected{% endif %}>A</option>
+              <option value="B" {% if section == "B" %}selected{% endif %}>B</option>
+              <option value="C" {% if section == "C" %}selected{% endif %}>C</option>
+              <option value="D" {% if section == "D" %}selected{% endif %}>D</option>
+              <option value="E" {% if section == "E" %}selected{% endif %}>E</option>
+              <option value="F" {% if section == "F" %}selected{% endif %}>F</option>
+            </select>
+            <div class="error-message"></div>
+          </div>
+        </div>
+      
+        <button id="submitButton" class="submit-btn">View Details</button>
+      </form>
+    </div>
+
+    <!-- Bottom purple wave (behind) -->
+    <svg class="wave-bottom-back" viewBox="0 0 1440 320" preserveAspectRatio="none">
+      <path fill="#d69cd9" d="M0,224L80,202.7C160,181,320,139,480,149.3C640,160,800,224,960,234.7C1120,245,1280,203,1360,181.3L1440,160L1440,320L1360,320C1280,320,1120,320,960,320C800,320,640,320,480,320C320,320,160,320,80,320L0,320Z"></path>
+    </svg>
+
+    <!-- Bottom grey wave (front) -->
+    <svg class="wave-bottom-front" viewBox="0 0 1440 320" preserveAspectRatio="none">
+      <path fill="#d3d3d3" d="M0,260L80,245C160,230,320,200,480,190C640,180,800,190,960,200C1120,210,1280,160,1360,135L1440,110L1440,320L1360,320C1280,320,1120,320,960,320C800,320,640,320,480,320C320,320,160,320,80,320L0,320Z"></path>
+    </svg>
+  </div>
+</body>
+</html>
