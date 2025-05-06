@@ -87,18 +87,104 @@ def students_table(request, batch):
     })
 
 
-def send_sms_to_all(request,batch):
-    if batch == "jnr":
-        students = jnr_core.objects.all()
-    elif batch == "snr":
-        students = snr_core.objects.all()
+# def send_sms_to_all(request,batch):
 
+
+#     if request.method == 'POST':
+
+
+#         branch = request.POST.get('branch')
+#         section = request.POST.get('section')
+#         if batch == "jnr":
+#             students = jnr_core.objects.filter(branch=branch, section=section)
+#         elif batch == "snr":
+#             students = snr_core.objects.filter(branch=branch, section=section)
+        
+        
+#         account_sid = os.getenv('TWILIO_ACCOUNT_SID')
+#         auth_token = os.getenv('TWILIO_AUTH_TOKEN')
+#         from_number = os.getenv('TWILIO_PHONE_NUMBER')
+
+#         client = Client(account_sid, auth_token)
+#         selected_roll_numbers = request.POST.getlist('selected_students')
+        
+#         if not selected_roll_numbers:
+#             return render(request, 'students_table.html', {
+#                 'students': students,
+#                 'message': 'No students selected for SMS'
+#             })
+        
+#         if batch == "jnr":
+#             selected_students = jnr_core.objects.filter(rno__in=selected_roll_numbers)
+#         elif batch == "snr":
+#             selected_students = snr_core.objects.filter(rno__in=selected_roll_numbers)
+#         #selected_students = Students.objects.filter(rollno__in=selected_roll_numbers)
+
+#         status = {}
+
+#         for student in selected_students:
+#             # Correct E.164 format, e.g., +91XXXXXXXXXX
+#             phone_number = student.phone.strip()
+            
+#             if not phone_number.startswith("+"):
+#                 phone_number = "+91" + phone_number  # Assuming India (+91)
+
+#             try:
+#                 message = client.messages.create(
+#                     body="Hi, this is a random message from Twilio", 
+#                     from_=from_number,
+#                     to=phone_number
+#                 )
+#                 status[student.rno] = "Sent"
+#             except Exception as e:
+#                 status[student.rno] = "Failed"
+#                 print(f"Error sending message to {phone_number}: {str(e)}")
+
+#         # Render the table again after the message sending attempt
+#         return render(request, 'students_table.html', {
+#             'students': students,
+#             'status': status,
+#             'batch': batch,
+#             'branch': branch,
+#             'section': section,
+#             'selected_roll_numbers': selected_roll_numbers,  # Retain selected roll numbers
+#             'message': 'Messages sent successfully' if "Sent" in status.values() else 'Failed to send messages'
+#         })
+#     else:
+#         branch = request.POST.get('branch')
+#         section = request.POST.get('section')
+#         if batch == "jnr":
+#             students = jnr_core.objects.filter(branch=branch, section=section)
+#         elif batch == "snr":
+#             students = snr_core.objects.filter(branch=branch, section=section)
+#         return render(request, 'students_table.html',{
+#             'students': students,
+#             'status': {},
+#             'batch': batch,
+#             'branch': branch,
+#             'section': section,
+#             'selected_roll_numbers': []  # Empty list when not submitting
+#         })
+
+
+def send_sms_to_all(request, batch):
+    # Initialize branch, section, and students variable
+    branch = ''
+    section = ''
+    students = []
+
+    # Handle POST request (when the message is being sent)
     if request.method == 'POST':
-        account_sid = os.getenv('TWILIO_ACCOUNT_SID')
-        auth_token = os.getenv('TWILIO_AUTH_TOKEN')
-        from_number = os.getenv('TWILIO_PHONE_NUMBER')
+        branch = request.POST.get('branch')
+        section = request.POST.get('section')
 
-        client = Client(account_sid, auth_token)
+        # Fetch the students based on the branch and section for the given batch
+        if batch == "jnr":
+            students = jnr_core.objects.filter(branch=branch, section=section)
+        elif batch == "snr":
+            students = snr_core.objects.filter(branch=branch, section=section)
+        
+        # Get the selected roll numbers from the form
         selected_roll_numbers = request.POST.getlist('selected_students')
         
         if not selected_roll_numbers:
@@ -107,14 +193,24 @@ def send_sms_to_all(request,batch):
                 'message': 'No students selected for SMS'
             })
         
-        selected_students = Students.objects.filter(rollno__in=selected_roll_numbers)
+        # Fetch the selected students using the roll numbers
+        if batch == "jnr":
+            selected_students = jnr_core.objects.filter(rno__in=selected_roll_numbers)
+        elif batch == "snr":
+            selected_students = snr_core.objects.filter(rno__in=selected_roll_numbers)
 
+        # Twilio setup
+        account_sid = os.getenv('TWILIO_ACCOUNT_SID')
+        auth_token = os.getenv('TWILIO_AUTH_TOKEN')
+        from_number = os.getenv('TWILIO_PHONE_NUMBER')
+
+        client = Client(account_sid, auth_token)
         status = {}
 
+        # Send SMS to selected students
         for student in selected_students:
-            # Correct E.164 format, e.g., +91XXXXXXXXXX
-            phone_number = student.phonenumber.strip()
-            
+            phone_number = student.phone.strip()
+
             if not phone_number.startswith("+"):
                 phone_number = "+91" + phone_number  # Assuming India (+91)
 
@@ -124,23 +220,40 @@ def send_sms_to_all(request,batch):
                     from_=from_number,
                     to=phone_number
                 )
-                status[student.rollno] = "Sent"
+                status[student.rno] = "Sent"
             except Exception as e:
-                status[student.rollno] = "Failed"
+                status[student.rno] = "Failed"
                 print(f"Error sending message to {phone_number}: {str(e)}")
 
-        # Render the table again after the message sending attempt
+        # Render the table again after message sending attempt
         return render(request, 'students_table.html', {
             'students': students,
-            'status': status,
+            'status': status,  # Show the status of the messages
+            'batch': batch,
+            'branch': branch,
+            'section': section,
             'selected_roll_numbers': selected_roll_numbers,  # Retain selected roll numbers
-            'message': 'Messages sent successfully' if status else 'Failed to send messages'  # Message feedback
+            'message': 'Messages sent successfully' if "Sent" in status.values() else 'Failed to send messages'
         })
     
-    return render(request, 'students_table.html',{
-        'students': students,
-        'status': {},
-        'selected_roll_numbers': []  # Empty list when not submitting
+    # Handle GET request (when the page is first loaded or refreshed)
+    else:
+        branch = request.GET.get('branch')
+        section = request.GET.get('section')
+
+        if batch == "jnr":
+            students = jnr_core.objects.filter(branch=branch, section=section)
+        elif batch == "snr":
+            students = snr_core.objects.filter(branch=branch, section=section)
+
+    # Render the table initially or after form submission
+    return render(request, 'students_table.html', {
+        'students': students,  # List of students based on selected branch and section
+        'status': {},  # No status at initial load
+        'batch': batch,
+        'branch': branch,
+        'section': section,
+        'selected_roll_numbers': []  # Empty list for the selected students on the first load
     })
 
 

@@ -147,6 +147,8 @@
     {% endif %}
     <form method="POST" action="{% url 'send_sms_to_all' batch=batch %}">
         {% csrf_token %}
+        <input type="hidden" name="branch" value="{{ branch }}">
+        <input type="hidden" name="section" value="{{ section }}">
         <table>
             <thead>
                 <tr>
