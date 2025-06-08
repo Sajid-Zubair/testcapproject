@@ -187,10 +187,20 @@ def send_sms_to_all(request, batch):
         # Get the selected roll numbers from the form
         selected_roll_numbers = request.POST.getlist('selected_students')
         
+        # if not selected_roll_numbers:
+        #     return render(request, 'students_table.html', {
+        #         'students': students,
+        #         'message': 'No students selected for SMS'
+        #     })
         if not selected_roll_numbers:
             return render(request, 'students_table.html', {
                 'students': students,
-                'message': 'No students selected for SMS'
+                'message': 'Please select students first',
+                'status': {},
+                'batch': batch,
+                'branch': branch,
+                'section': section,
+                'selected_roll_numbers': []
             })
         
         # Fetch the selected students using the roll numbers

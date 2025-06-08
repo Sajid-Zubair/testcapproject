@@ -143,7 +143,7 @@
 <body>
     <h1>Students List</h1>
     {% if message %}
-        <p>{{message}}</p>
+        <p style="color: red; font-size: 20px; text-align: center; font-style: italic">{{message}}</p>
     {% endif %}
     <form method="POST" action="{% url 'send_sms_to_all' batch=batch %}">
         {% csrf_token %}
