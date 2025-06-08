@@ -139,6 +139,12 @@
         color: #fff;
         font-weight: 500;
       }
+      .row-success {
+      background-color: #d4edda !important;  /* light green background */
+      }
+      .row-failed {
+          background-color: #f8d7da !important;  /* light red background */
+      }
 </style>
 <body>
     <h1>Students List</h1>
@@ -169,12 +175,18 @@
             <tbody>
                 {% if students %}
                     {% for student in students %}
-                    <tr>
+                    <tr class="{% if student.sms_status == 'Sent' %}row-success{% elif student.sms_status == 'Failed' %}row-failed{% endif %}">
                         <td>
                             <input type="checkbox" name="selected_students" class="rowCheckbox" value="{{ student.rno }}">
                         </td>
                         <td>{{ student.rno }}</td>
-                        <td>{{ student.name }}</td>
+                        <td>{{ student.name }}
+                          {% if student.sms_status == 'Sent' %}
+                              ✅
+                          {% elif student.sms_status == 'Failed' %}
+                              ❌
+                          {% endif %}
+                        </td>
                         <td>{{ student.branch }}</td>
                         <td>{{ student.section }}</td>
                         <td>{{ student.subject1 }}</td>

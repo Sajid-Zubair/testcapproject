@@ -144,10 +144,13 @@ def send_sms_to_all(request, batch):
                     from_=from_number,
                     to=phone_number
                 )
-                status[student.rno] = "Sent"
+                status[str(student.rno)] = "Sent"
             except Exception as e:
-                status[student.rno] = "Failed"
+                status[str(student.rno)] = "Failed"
                 print(f"Error sending message to {phone_number}: {str(e)}")
+                
+        for student in students:
+            student.sms_status = status.get(str(student.rno), None)
 
         # Render the table again after message sending attempt
         return render(request, 'students_table.html', {
