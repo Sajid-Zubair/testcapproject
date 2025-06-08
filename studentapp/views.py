@@ -86,87 +86,6 @@ def students_table(request, batch):
         "batch": batch
     })
 
-
-# def send_sms_to_all(request,batch):
-
-
-#     if request.method == 'POST':
-
-
-#         branch = request.POST.get('branch')
-#         section = request.POST.get('section')
-#         if batch == "jnr":
-#             students = jnr_core.objects.filter(branch=branch, section=section)
-#         elif batch == "snr":
-#             students = snr_core.objects.filter(branch=branch, section=section)
-        
-        
-#         account_sid = os.getenv('TWILIO_ACCOUNT_SID')
-#         auth_token = os.getenv('TWILIO_AUTH_TOKEN')
-#         from_number = os.getenv('TWILIO_PHONE_NUMBER')
-
-#         client = Client(account_sid, auth_token)
-#         selected_roll_numbers = request.POST.getlist('selected_students')
-        
-#         if not selected_roll_numbers:
-#             return render(request, 'students_table.html', {
-#                 'students': students,
-#                 'message': 'No students selected for SMS'
-#             })
-        
-#         if batch == "jnr":
-#             selected_students = jnr_core.objects.filter(rno__in=selected_roll_numbers)
-#         elif batch == "snr":
-#             selected_students = snr_core.objects.filter(rno__in=selected_roll_numbers)
-#         #selected_students = Students.objects.filter(rollno__in=selected_roll_numbers)
-
-#         status = {}
-
-#         for student in selected_students:
-#             # Correct E.164 format, e.g., +91XXXXXXXXXX
-#             phone_number = student.phone.strip()
-            
-#             if not phone_number.startswith("+"):
-#                 phone_number = "+91" + phone_number  # Assuming India (+91)
-
-#             try:
-#                 message = client.messages.create(
-#                     body="Hi, this is a random message from Twilio", 
-#                     from_=from_number,
-#                     to=phone_number
-#                 )
-#                 status[student.rno] = "Sent"
-#             except Exception as e:
-#                 status[student.rno] = "Failed"
-#                 print(f"Error sending message to {phone_number}: {str(e)}")
-
-#         # Render the table again after the message sending attempt
-#         return render(request, 'students_table.html', {
-#             'students': students,
-#             'status': status,
-#             'batch': batch,
-#             'branch': branch,
-#             'section': section,
-#             'selected_roll_numbers': selected_roll_numbers,  # Retain selected roll numbers
-#             'message': 'Messages sent successfully' if "Sent" in status.values() else 'Failed to send messages'
-#         })
-#     else:
-#         branch = request.POST.get('branch')
-#         section = request.POST.get('section')
-#         if batch == "jnr":
-#             students = jnr_core.objects.filter(branch=branch, section=section)
-#         elif batch == "snr":
-#             students = snr_core.objects.filter(branch=branch, section=section)
-#         return render(request, 'students_table.html',{
-#             'students': students,
-#             'status': {},
-#             'batch': batch,
-#             'branch': branch,
-#             'section': section,
-#             'selected_roll_numbers': []  # Empty list when not submitting
-#         })
-
-
 def send_sms_to_all(request, batch):
     # Initialize branch, section, and students variable
     branch = ''
@@ -187,11 +106,6 @@ def send_sms_to_all(request, batch):
         # Get the selected roll numbers from the form
         selected_roll_numbers = request.POST.getlist('selected_students')
         
-        # if not selected_roll_numbers:
-        #     return render(request, 'students_table.html', {
-        #         'students': students,
-        #         'message': 'No students selected for SMS'
-        #     })
         if not selected_roll_numbers:
             return render(request, 'students_table.html', {
                 'students': students,
