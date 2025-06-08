@@ -216,7 +216,7 @@ def send_sms_to_all(request, batch):
 
             try:
                 message = client.messages.create(
-                    body="Hi, this is a random message from Twilio", 
+                    body="Hi, this is a random message from Twilio regarding your results", 
                     from_=from_number,
                     to=phone_number
                 )
